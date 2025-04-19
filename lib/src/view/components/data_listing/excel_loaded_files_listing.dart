@@ -8,7 +8,7 @@ class ExcelLoadedFilesListingPlaceHolder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScrollViewList(
-      height: MediaQuery.of(context).size.height * 0.4,
+      height: MediaQuery.of(context).size.height * 0.5,
       data: ["", "", "", ""],
       cardWidget:
           ({item}) => Padding(

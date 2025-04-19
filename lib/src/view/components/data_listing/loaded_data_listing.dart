@@ -16,21 +16,16 @@ class LoadedDataListing extends StatefulWidget {
 class _LoadedDataListingState extends State<LoadedDataListing> {
   @override
   Widget build(BuildContext context) {
-    return RoundedBorderWrap(
-      padding: 5,
-      backgroundColor: Colors.transparent,
-      borderColor: AppTheme.primaryBorderColor,
-      child: Column(
-        spacing: 5,
-        children: [
-          widget.appController.isExcelFileCacheEmpty()
-              ? ExcelLoadedFilesListingPlaceHolder()
-              : ExcelLoadedFilesListing(),
-          widget.appController.isPackageOrderCacheEmpty()
-              ? PackageOrderLoadedListingPlaceHolder()
-              : PackageOrderLoadedListing(),
-        ],
-      ),
+    return Column(
+      spacing: 5,
+      children: [
+        widget.appController.isExcelFileCacheEmpty()
+            ? ExcelLoadedFilesListingPlaceHolder()
+            : ExcelLoadedFilesListing(),
+        widget.appController.isPackageOrderCacheEmpty()
+            ? PackageOrderLoadedListingPlaceHolder()
+            : PackageOrderLoadedListing(),
+      ],
     );
   }
 }

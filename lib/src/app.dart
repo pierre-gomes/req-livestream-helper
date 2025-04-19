@@ -16,6 +16,7 @@ class _LiveStreamHelperState extends State<LiveStreamHelper> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: Constants.APP_LABEL,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
