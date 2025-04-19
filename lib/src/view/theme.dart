@@ -10,4 +10,6 @@ class AppTheme {
     235,
     235,
   );
+
+  static const Color disabledColor = Color.fromARGB(255, 219, 218, 218);
 }

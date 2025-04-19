@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:req_livestream_helper/src/controller/app_controller.dart';
-import 'package:req_livestream_helper/src/view/components/base_components/coming_up_animation_wrap.dart';
+import 'package:req_livestream_helper/src/view/components/base_components/base_coming_up_animation_wrap.dart';
 import 'package:req_livestream_helper/src/view/components/data_listing/loaded_data_listing.dart';
 import 'package:req_livestream_helper/src/view/theme.dart';
 
