@@ -19,13 +19,13 @@ class _ComingUpAnimationState extends State<ComingUpAnimation>
 
     // Initialize the AnimationController
     _controller = AnimationController(
-      duration: Duration(milliseconds: 800),
+      duration: Duration(milliseconds: 1100),
       vsync: this,
     );
 
     // Define the slide-up animation (starting below the screen)
     _slideAnimation = Tween<Offset>(
-      begin: Offset(0, 0.2), // Start from the bottom of the screen
+      begin: Offset(0, 0.4), // Start from the bottom of the screen
       end: Offset.zero, // End at its original position
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 

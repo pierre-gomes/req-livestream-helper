@@ -13,8 +13,8 @@ void main() {
   getIt = DependencyService.getIt;
   DependencyService.init();
 
-  setWindowMinSize(Size(750, 500));
-  setWindowMaxSize(Size(750, 500));
+  setWindowMinSize(Size(650, 500));
+  setWindowMaxSize(Size(650, 500));
 
   runApp(LiveStreamHelper());
 }

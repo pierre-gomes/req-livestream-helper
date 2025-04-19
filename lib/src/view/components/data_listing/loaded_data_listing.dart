@@ -21,7 +21,9 @@ class _LoadedDataListingState extends State<LoadedDataListing> {
       children: [
         widget.appController.isExcelFileCacheEmpty()
             ? ExcelLoadedFilesListingPlaceHolder()
-            : ExcelLoadedFilesListing(),
+            : ExcelLoadedFilesListing(
+              list: widget.appController.runtimeMemory?.excelFileMemory ?? [],
+            ),
         widget.appController.isPackageOrderCacheEmpty()
             ? PackageOrderLoadedListingPlaceHolder()
             : PackageOrderLoadedListing(),

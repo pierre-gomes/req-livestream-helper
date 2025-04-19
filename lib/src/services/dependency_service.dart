@@ -5,7 +5,7 @@ import 'package:req_livestream_helper/src/data/data_source/runtime_memory.dart';
 class DependencyService {
   static GetIt getIt = GetIt.instance;
   static void init() {
-    getIt.registerSingleton(AppController());
     getIt.registerSingleton(RuntimeMemory());
+    getIt.registerSingleton(AppController());
   }
 }

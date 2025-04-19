@@ -18,6 +18,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool loadingFile = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,18 +26,28 @@ class _MyHomePageState extends State<MyHomePage> {
       body: ComingUpAnimation(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: LoadedDataListing(appController: widget.appController),
+          child: Container(
+            color: Colors.amber,
+            child: LoadedDataListing(appController: widget.appController),
+          ),
         ),
       ),
-      // body: Padding(
-      //   padding: const EdgeInsets.all(8.0),
-      //   child: LoadedDataListing(appController: widget.appController),
-      // ),
       floatingActionButton: ComingUpAnimation(
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () async {
+            loadingFile = true;
+            setState(() {});
+            await widget.appController.pickXlsx();
+            loadingFile = false;
+            setState(() {});
+          },
           backgroundColor: AppTheme.primaryBackgroundColor,
-          child: Icon(Icons.add, color: AppTheme.primaryFontColor),
+          child:
+              loadingFile
+                  ? ComingUpAnimation(child: CircularProgressIndicator())
+                  : ComingUpAnimation(
+                    child: Icon(Icons.add, color: AppTheme.primaryFontColor),
+                  ),
         ),
       ),
     );
