@@ -6,6 +6,7 @@ import 'package:window_size/window_size.dart';
 
 /// global acces to SeviceLocator
 GetIt? getIt;
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

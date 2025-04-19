@@ -17,6 +17,7 @@ class _LiveStreamHelperState extends State<LiveStreamHelper> {
     return MaterialApp(
       title: Constants.APP_LABEL,
       debugShowCheckedModeBanner: false,
+      navigatorKey: navigatorKey,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
