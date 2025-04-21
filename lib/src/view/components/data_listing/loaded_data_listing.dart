@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:req_livestream_helper/src/controller/app_controller.dart';
 import 'package:req_livestream_helper/src/view/components/data_listing/excel_loaded_files_listing.dart';
 import 'package:req_livestream_helper/src/view/components/data_listing/clients_order_list_listing.dart';
+import 'package:req_livestream_helper/src/view/theme.dart';
 
 class LoadedDataListing extends StatefulWidget {
   AppController appController;
@@ -15,7 +16,7 @@ class _LoadedDataListingState extends State<LoadedDataListing> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 5,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         widget.appController.isExcelFileCacheEmpty()
             ? ExcelLoadedFilesListingPlaceHolder()
@@ -29,6 +30,16 @@ class _LoadedDataListingState extends State<LoadedDataListing> {
                   widget.appController.runtimeMemory?.clientOrderListMemory ??
                   [],
             ),
+
+        /// TODO: app version
+        Text(
+          'v0.0.0#-',
+          style: TextStyle(
+            fontFamily: 'Ubuntu',
+            fontWeight: FontWeight.w600,
+            color: AppTheme.disabledColor.withAlpha(50),
+          ),
+        ),
       ],
     );
   }

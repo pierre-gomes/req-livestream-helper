@@ -6,5 +6,5 @@ class AppTheme {
   static const Color primaryFontColor = Colors.deepPurple;
   static const Color primaryBackgroundColor = Colors.amber;
 
-  static const Color disabledColor = Color.fromARGB(33, 27, 56, 105);
+  static const Color disabledColor = Color.fromARGB(12, 27, 56, 105);
 }
