@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:req_livestream_helper/src/controller/app_controller.dart';
-import 'package:req_livestream_helper/src/view/components/data_listing/excel_loaded_files_listing.dart';
-import 'package:req_livestream_helper/src/view/components/data_listing/clients_order_list_listing.dart';
+import 'package:req_livestream_helper/src/view/components/data_listing/components/excel_loaded_files_listing.dart';
+import 'package:req_livestream_helper/src/view/components/data_listing/components/clients_order_list_listing.dart';
 import 'package:req_livestream_helper/src/view/theme.dart';
 
 class LoadedDataListing extends StatefulWidget {

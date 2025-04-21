@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:req_livestream_helper/src/app.dart';
@@ -13,9 +15,10 @@ void main() {
 
   getIt = DependencyService.getIt;
   DependencyService.init();
-
-  setWindowMinSize(Size(650, 500));
-  setWindowMaxSize(Size(650, 500));
+  // if (Platform.isWindows) {
+  //   setWindowMinSize(Size(750, 600));
+  //   setWindowMaxSize(Size(750, 600));
+  // }
 
   runApp(LiveStreamHelper());
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:req_livestream_helper/src/view/theme.dart';
 
 class RoundedBorderWrap extends StatelessWidget {
   Widget child;
@@ -12,6 +13,13 @@ class RoundedBorderWrap extends StatelessWidget {
     required this.borderColor,
     required this.padding,
   });
+  RoundedBorderWrap.base({
+    super.key,
+    required this.child,
+    this.backgroundColor = Colors.transparent,
+    this.borderColor = AppTheme.disabledColor,
+    this.padding = 5,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +28,7 @@ class RoundedBorderWrap extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor,
         border: Border.all(color: borderColor, width: 1.5),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(15),
       ),
       child: child,
     );
