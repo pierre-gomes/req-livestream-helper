@@ -2,4 +2,6 @@
 
 class Constants {
   static const APP_LABEL = 'LiveStream Helper';
+  static const DEBUG = true;
+  static const XTREME_DEBUG = true;
 }

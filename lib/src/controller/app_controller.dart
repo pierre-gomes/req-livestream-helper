@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:excel/excel.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:req_livestream_helper/main.dart';
 import 'package:req_livestream_helper/src/data/data_source/runtime_memory.dart';
 import 'package:req_livestream_helper/src/data/models/excel_file.dart';
+import 'package:req_livestream_helper/src/domain/constants.dart';
 import 'package:req_livestream_helper/src/services/feedback_service.dart';
 
 class AppController {
@@ -40,37 +42,166 @@ class AppController {
   }
 
   Future processXlsx(String filePath) async {
-    //   List<String> clients
+    File file = File(filePath);
+    var bytes = await file.readAsBytes();
+    var excel = Excel.decodeBytes(bytes);
 
-    //   File file = File(filePath);
-    //   var bytes = await file.readAsBytes();
-    //   var excel = Excel.decodeBytes(bytes);
+    List<String> cList = fetchOrderClientList(excel);
+    List<ClientOrder> clientOrderList =
+        cList.map((String c) => ClientOrder(c, [])).toList();
 
-    //   // ignore: unnecessary_null_comparison
-    //   if (excel != null) {
+    // // ignore: unnecessary_null_comparison
+    if (excel != null) {
+      /// fetchs all clients in excel
+      excel.tables.forEach((tableName, table) {
+        /// iterates in sheet rows
+        for (var rowIndex = 0; rowIndex < table.rows.length; rowIndex++) {
+          /// iterate in sheets specific row columns
+          for (
+            var colIndex = 0;
+            colIndex < table.rows[rowIndex].length;
+            colIndex++
+          ) {
+            var cellValue =
+                table.rows[rowIndex][colIndex]?.value.toString() ?? '';
 
-    //     // Loop through all sheets and find names
-    //     excel.tables.forEach((tableName, table) {
-    //       print("Searching in table: $tableName");
+            if (rowIndex == 0) {
+              //collect labels
+            } else {
+              // if in client instagram @ colunm range
+              if (colIndex >= 2) {
+                // if cell is empty
+                if (cellValue == '') {
+                  if (Constants.XTREME_DEBUG) {
+                    log(
+                      '[${rowIndex.toString()}][${colIndex.toString()}]',
+                      name: 'app_controller.processXlxs.skipping_cell_at_index',
+                    );
+                  }
+                  continue;
+                }
+                // collect client @
+                List<Data?> rowCursor = table.rows[rowIndex];
+                var codVal = rowCursor[0]?.value;
+                var dscVal = rowCursor[1]?.value;
+                var sizeVal = table.rows[0][colIndex]?.value;
 
-    //       // Loop through rows and columns
-    //       for (var rowIndex = 0; rowIndex < table.rows.length; rowIndex++) {
-    //         for (var colIndex = 0; colIndex < table.rows[rowIndex].length; colIndex++) {
-    //           var cellValue = table.rows[rowIndex][colIndex];
+                // treats empty cod/dsc values
+                if (codVal == null) {
+                  codVal = treatCodDscOffSet(table.rows, rowIndex, 0);
+                  dscVal = treatCodDscOffSet(table.rows, rowIndex, 1);
+                }
 
-    //           // Check if the cell contains a non-null value (assumed to be a name)
-    //           if (cellValue != null && cellValue is String) {
-    //             // If the name already exists in the map, add the position
-    //             if (_nameOccurrences.containsKey(cellValue)) {
-    //               _nameOccurrences[cellValue]?.add('Row: $rowIndex, Column: $colIndex');
-    //             } else {
-    //               // Initialize with the first occurrence
-    //               _nameOccurrences[cellValue] = ['Row: $rowIndex, Column: $colIndex'];
-    //             }
-    //           }
-    //         }
-    //       }
-    //     });
-    // }
+                int cod = codVal is int ? codVal : -1;
+                String prodDsc =
+                    dscVal is SharedString ? dscVal.toString() : '-';
+                String prodSize =
+                    sizeVal is SharedString ? sizeVal.toString() : '-';
+                clientOrderList
+                    .firstWhere(
+                      (ClientOrder clientOrder) =>
+                          clientOrder.client == cellValue,
+                    )
+                    .products
+                    .add(Product(cod, prodSize, prodSize));
+
+                if (Constants.DEBUG) {
+                  log(
+                    'cod: ${cod}\ndsc: ${prodDsc}\nsize: ${prodSize}',
+                    name:
+                        'app_controller.processXlxs.adding_product_to_client: $cellValue',
+                  );
+                }
+              }
+            }
+          }
+        }
+      });
+    }
   }
+
+  dynamic treatCodDscOffSet(var excelCursor, int rI, int cI) {
+    int limit = 10;
+    var rowIndexOffSet = rI;
+    while (limit >= 0 && rowIndexOffSet >= 0) {
+      var cellVal = excelCursor[rowIndexOffSet][cI]?.value;
+      if (cellVal != null) {
+        if (cellVal is SharedString) {
+          if (cellVal.toString().isNotEmpty && cellVal.toString() != '') {
+            return cellVal;
+          }
+        }
+        if (cellVal is int) {
+          return cellVal;
+        }
+      }
+
+      rowIndexOffSet--;
+      limit--;
+    }
+    return null;
+  }
+
+  List<String> fetchOrderClientList(Excel excel) {
+    List<String> clients = [];
+
+    // ignore: unnecessary_null_comparison
+    if (excel != null) {
+      /// fetchs all clients in excel
+      excel.tables.forEach((tableName, table) {
+        /// iterates in sheet rows
+        for (var rowIndex = 0; rowIndex < table.rows.length; rowIndex++) {
+          /// iterate in sheets specific row columns
+          for (
+            var colIndex = 0;
+            colIndex < table.rows[rowIndex].length;
+            colIndex++
+          ) {
+            var cellValue =
+                table.rows[rowIndex][colIndex]?.value.toString() ?? '';
+
+            if (rowIndex == 0) {
+              //collect labels
+            } else {
+              // if in client instagram @ colunm range
+              if (colIndex >= 2) {
+                // collect client @
+                if (!clients.contains(cellValue)) {
+                  clients.add(cellValue);
+                  if (Constants.XTREME_DEBUG) {
+                    log(
+                      cellValue,
+                      name:
+                          'app_controller.fetchOrderClientList.adding_to_orders_client_list',
+                    );
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+    if (Constants.DEBUG) {
+      log(
+        clients.length.toString(),
+        name: 'app_controller.fetchOrderClientList.final_client_list_size',
+      );
+    }
+    return clients;
+  }
+}
+
+class ClientOrder {
+  String client;
+  List<Product> products;
+  ClientOrder(this.client, this.products);
+}
+
+class Product {
+  int cod;
+  String dsc;
+  String prodSize;
+
+  Product(this.cod, this.dsc, this.prodSize);
 }
