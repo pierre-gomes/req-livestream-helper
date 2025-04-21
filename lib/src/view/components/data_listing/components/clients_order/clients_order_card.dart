@@ -6,6 +6,7 @@ import 'package:req_livestream_helper/src/view/components/base_components/base_r
 import 'package:req_livestream_helper/src/view/components/base_components/base_scroll_view_list.dart';
 import 'package:req_livestream_helper/src/view/components/base_components/base_text.dart';
 import 'package:req_livestream_helper/src/view/components/data_listing/components/clients_order/dialog/clients_order_dialog.dart';
+import 'package:req_livestream_helper/src/view/components/printing/print_viewer.dart';
 import 'package:req_livestream_helper/src/view/theme.dart';
 
 class ClientOrderCard extends StatelessWidget {
@@ -48,7 +49,17 @@ class ClientOrderCard extends StatelessWidget {
                   color: AppTheme.primaryFontColor.withAlpha(500),
                   size: 20,
                 ),
-                () {},
+                () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: MyPdfPreview(),
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),

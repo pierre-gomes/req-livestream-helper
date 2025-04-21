@@ -47,7 +47,7 @@ class ClientsOrderDialog extends StatelessWidget {
                       ),
                   data:
                       clientsOrder.where((cO) => cO.client.isNotEmpty).toList(),
-                  height: MediaQuery.of(context).size.height * 0.5,
+                  height: MediaQuery.of(context).size.height * 0.4,
                 ),
               ),
             ],
