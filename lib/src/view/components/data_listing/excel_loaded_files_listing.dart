@@ -1,4 +1,7 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
+import 'package:req_livestream_helper/src/data/data_source/runtime_memory.dart';
 import 'package:req_livestream_helper/src/data/models/excel_file.dart';
 import 'package:req_livestream_helper/src/view/components/base_components/base_rounded_border_wrap.dart';
 import 'package:req_livestream_helper/src/view/components/base_components/base_scroll_view_list.dart';
@@ -39,7 +42,7 @@ class ExcelLoadedFilesListingPlaceHolder extends StatelessWidget {
 }
 
 class ExcelLoadedFilesListing extends StatelessWidget {
-  List<ExcelFile> list;
+  List<RuntimeMemoryData<ExcelFile>> list;
   ExcelLoadedFilesListing({super.key, required this.list});
 
   @override
@@ -50,7 +53,7 @@ class ExcelLoadedFilesListing extends StatelessWidget {
       borderColor: AppTheme.disabledColor,
       padding: 5,
       child: BaseScrollViewList(
-        cardWidget: ({item}) => Text(item.path),
+        cardWidget: ({item}) => Text(item.data.path),
         data: list,
         height: MediaQuery.of(context).size.height * 0.3,
       ),

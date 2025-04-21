@@ -12,6 +12,8 @@ import 'package:req_livestream_helper/src/services/feedback_service.dart';
 
 class AppController {
   RuntimeMemory? runtimeMemory = getIt?.get<RuntimeMemory>();
+  bool isClientsOrderListCacheEmpty() =>
+      runtimeMemory?.clientOrderListMemory.isEmpty ?? false;
   bool isPackageOrderCacheEmpty() =>
       runtimeMemory?.packageOrderMemory.isEmpty ?? false;
   bool isExcelFileCacheEmpty() =>
@@ -22,12 +24,13 @@ class AppController {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
     if (result != null && (result.files.first.path != null)) {
-      runtimeMemory?.excelFileMemory.add(
-        ExcelFile(path: result.files.first.path!),
-      );
+      runtimeMemory?.addExcelFile(ExcelFile(path: result.files.first.path!));
       FeedbackService.showSuccessMessage("Arquivo carregado com sucesso");
       try {
-        await processXlsx(result.files.first.path!);
+        List<ClientOrder> clientOrderList = await processXlsx(
+          result.files.first.path!,
+        );
+        runtimeMemory?.addClientOrderList(clientOrderList);
         FeedbackService.showSuccessMessage(
           "Planilha processada. Resultado encontra-se no arquivo em: ...",
         );
@@ -41,7 +44,7 @@ class AppController {
     }
   }
 
-  Future processXlsx(String filePath) async {
+  Future<List<ClientOrder>> processXlsx(String filePath) async {
     File file = File(filePath);
     var bytes = await file.readAsBytes();
     var excel = Excel.decodeBytes(bytes);
@@ -97,6 +100,8 @@ class AppController {
                     dscVal is SharedString ? dscVal.toString() : '-';
                 String prodSize =
                     sizeVal is SharedString ? sizeVal.toString() : '-';
+
+                /// adds product to client order
                 clientOrderList
                     .firstWhere(
                       (ClientOrder clientOrder) =>
@@ -118,6 +123,7 @@ class AppController {
         }
       });
     }
+    return clientOrderList;
   }
 
   dynamic treatCodDscOffSet(var excelCursor, int rI, int cI) {

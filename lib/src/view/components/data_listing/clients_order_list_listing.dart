@@ -1,10 +1,14 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
+import 'package:req_livestream_helper/src/controller/app_controller.dart';
+import 'package:req_livestream_helper/src/data/data_source/runtime_memory.dart';
 import 'package:req_livestream_helper/src/view/components/base_components/base_rounded_border_wrap.dart';
 import 'package:req_livestream_helper/src/view/components/base_components/base_scroll_view_list.dart';
 import 'package:req_livestream_helper/src/view/theme.dart';
 
-class PackageOrderLoadedListingPlaceHolder extends StatelessWidget {
-  const PackageOrderLoadedListingPlaceHolder({super.key});
+class ClientsOrderListPlaceHolder extends StatelessWidget {
+  const ClientsOrderListPlaceHolder({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +41,23 @@ class PackageOrderLoadedListingPlaceHolder extends StatelessWidget {
   }
 }
 
-class PackageOrderLoadedListing extends StatelessWidget {
-  const PackageOrderLoadedListing({super.key});
+class ClientsOrderList extends StatelessWidget {
+  List<RuntimeMemoryData<List<ClientOrder>>> list;
+
+  ClientsOrderList({super.key, required this.list});
 
   @override
   Widget build(BuildContext context) {
-    return const Expanded(child: Placeholder());
+    // return Placeholder();
+    return RoundedBorderWrap(
+      backgroundColor: Colors.transparent,
+      borderColor: AppTheme.disabledColor,
+      padding: 5,
+      child: BaseScrollViewList(
+        cardWidget: ({item}) => Text(item.data.length.toString()),
+        data: list,
+        height: MediaQuery.of(context).size.height * 0.3,
+      ),
+    );
   }
 }
