@@ -33,7 +33,7 @@ class _LoadedDataListingState extends State<LoadedDataListing> {
 
         /// TODO: app version
         Text(
-          'v0.0.0#-',
+          'v0.0.1+1#0',
           style: TextStyle(
             fontFamily: 'Ubuntu',
             fontWeight: FontWeight.w600,
