@@ -108,7 +108,7 @@ class AppController {
                           clientOrder.client == cellValue,
                     )
                     .products
-                    .add(Product(cod, prodSize, prodSize));
+                    .add(Product(cod, dscVal.toString(), prodSize));
 
                 if (Constants.DEBUG) {
                   log(

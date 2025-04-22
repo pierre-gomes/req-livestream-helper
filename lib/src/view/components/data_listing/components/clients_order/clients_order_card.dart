@@ -24,7 +24,13 @@ class ClientOrderCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           BaseText(dthr),
-          BaseText(clientsOrder.length.toString()),
+          BaseText(
+            clientsOrder
+                .where((cO) => cO.client != '' && cO.client != 'X')
+                .toList()
+                .length
+                .toString(),
+          ),
           Row(
             spacing: 4,
             children: [
@@ -38,7 +44,14 @@ class ClientOrderCard extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder: (context) {
-                      return ClientsOrderDialog(clientsOrder: clientsOrder);
+                      return ClientsOrderDialog(
+                        clientsOrder:
+                            clientsOrder
+                                .where(
+                                  (cO) => cO.client != '' && cO.client != 'X',
+                                )
+                                .toList(),
+                      );
                     },
                   );
                 },
@@ -55,7 +68,14 @@ class ClientOrderCard extends StatelessWidget {
                     builder: (context) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: MyPdfPreview(),
+                        child: PrintViewer(
+                          clientOrderList:
+                              clientsOrder
+                                  .where(
+                                    (cO) => cO.client != '' && cO.client != 'X',
+                                  )
+                                  .toList(),
+                        ),
                       );
                     },
                   );
