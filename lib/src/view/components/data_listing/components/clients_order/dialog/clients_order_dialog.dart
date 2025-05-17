@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:req_livestream_helper/src/controller/app_controller.dart';
+import 'package:req_livestream_helper/src/data/data_helper.dart';
 import 'package:req_livestream_helper/src/view/components/base_components/base_coming_up_animation_wrap.dart';
 import 'package:req_livestream_helper/src/view/components/base_components/base_rounded_border_wrap.dart';
 import 'package:req_livestream_helper/src/view/components/base_components/base_scroll_view_list.dart';
@@ -69,13 +71,22 @@ class ClientsOrderInfo extends StatelessWidget {
       children: [
         BaseText('Informações da live'.toUpperCase()),
         SingleClientsOrderInfo(
-          label: 'Clientes (vendidos)',
-          value: clientsOrder.length.toString(),
+          label: 'Numero de clientes na live (compra)',
+          value: DataHelper.getClientsSelledTotal(clientsOrder).toString(),
         ),
-        SingleClientsOrderInfo(label: 'Produtos vendidos', value: 'TO-DO'),
-        SingleClientsOrderInfo(label: 'Produtos disponiveis', value: 'TO-DO'),
-        SingleClientsOrderInfo(label: 'Produtos indisponiveis', value: 'TO-DO'),
-        SingleClientsOrderInfo(label: 'Produtos total', value: 'TO-DO'),
+        SingleClientsOrderInfo(
+          label: 'Quantidade de produtos vendidos',
+          value: DataHelper.getProductsQtdTotal(clientsOrder).toString(),
+        ),
+        // SingleClientsOrderInfo(label: 'Produtos disponiveis', value: 'TO-DO'),
+        // SingleClientsOrderInfo(label: 'Produtos indisponiveis', value: 'TO-DO'),
+        SingleClientsOrderInfo(
+          label: 'Valor vendido em produtos',
+          value: NumberFormat.currency(
+            locale: 'pt_BR',
+            symbol: 'R\$',
+          ).format(DataHelper.getProductsTotal(clientsOrder)),
+        ),
         RoundedBorderWrap.base(
           child: Column(
             children: [
