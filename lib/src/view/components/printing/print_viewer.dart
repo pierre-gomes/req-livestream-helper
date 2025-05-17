@@ -16,6 +16,7 @@ import 'package:pdf/src/widgets/decoration.dart' as d;
 import 'package:pdf/src/pdf/color.dart' as pC;
 import 'package:pdf/src/widgets/box_border.dart' as bB;
 import 'package:pdf/src/widgets/border_radius.dart' as bR;
+import 'package:req_livestream_helper/src/domain/constants.dart';
 
 class PrintViewer extends StatelessWidget {
   List<ClientOrder> clientOrderList;
@@ -33,7 +34,12 @@ class PrintViewer extends StatelessWidget {
   }
 
   // ignore: non_constant_identifier_names
-  pw.Page CustomPdfPage(PdfPageFormat format, ClientOrder clientOrder) {
+  pw.Page CustomPdfPage(
+    PdfPageFormat format,
+    ClientOrder clientOrder,
+    int index, {
+    String? orderPart,
+  }) {
     return pw.Page(
       pageFormat: format,
       build:
@@ -43,7 +49,7 @@ class PrintViewer extends StatelessWidget {
               children: [
                 pw.Center(
                   child: pw.Text(
-                    "Separação Pedido (SP) - #${clientOrderList.indexOf(clientOrder)}",
+                    "Separação Pedido (SP) - #$index${orderPart ?? " "}",
                     style: tS.TextStyle(
                       fontSize: 20,
                       fontWeight: tS.FontWeight.bold,
@@ -149,11 +155,46 @@ class PrintViewer extends StatelessWidget {
     );
   }
 
+  List<List<Product>> divideOrderInChunks(List<Product> list, int chunkSize) {
+    List<List<Product>> chunks = [];
+    for (var i = 0; i < list.length; i += chunkSize) {
+      int end = (i + chunkSize < list.length) ? i + chunkSize : list.length;
+      chunks.add(list.sublist(i, end));
+    }
+    return chunks;
+  }
+
   Future<Uint8List> _generatePdf(PdfPageFormat format) async {
     final pdf = pw.Document();
     // ignore: avoid_function_literals_in_foreach_calls
     clientOrderList.forEach((clientOrder) {
-      pdf.addPage(CustomPdfPage(format, clientOrder));
+      int spIndex = clientOrderList.indexOf(clientOrder) + 1;
+
+      /// checks if order is too big for a unique page
+      if (clientOrder.products.length > 10) {
+        /// divides order in sublists chunks
+        List<List<Product>> chuncks = divideOrderInChunks(
+          clientOrder.products,
+          Constants.MAX_PRODUCTS_PER_PAGE,
+        );
+
+        for (var i = 0; i < chuncks.length; i++) {
+          // ignore: no_leading_underscores_for_local_identifiers
+          ClientOrder _cO = ClientOrder(clientOrder.client, chuncks[i]);
+          pdf.addPage(
+            CustomPdfPage(
+              format,
+              _cO,
+              spIndex,
+              orderPart: " (${i + 1}/${chuncks.length})",
+            ),
+          );
+        }
+      }
+      /// otherwise adds intire order in the page
+      else {
+        pdf.addPage(CustomPdfPage(format, clientOrder, spIndex));
+      }
     });
     return pdf.save();
   }
