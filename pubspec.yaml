@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  file_picker: ^6.1.1
+  file_picker: ^8.3.6
   excel: ^2.0.6
   cupertino_icons: ^1.0.8
   get_it: ^8.0.3
