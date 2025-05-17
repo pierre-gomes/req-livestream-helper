@@ -31,9 +31,7 @@ class AppController {
           result.files.first.path!,
         );
         runtimeMemory?.addClientOrderList(clientOrderList);
-        FeedbackService.showSuccessMessage(
-          "Planilha processada. Resultado encontra-se no arquivo em: ...",
-        );
+        FeedbackService.showSuccessMessage("Planilha processada com sucesso.");
       } catch (err, stk) {
         FeedbackService.showErrMessage(
           "Algo deu errado no processamento dessa planlha\n mais infos (tira um print e envia p dev se persistir):\n ${err.toString()}\n${stk.toString()}",
