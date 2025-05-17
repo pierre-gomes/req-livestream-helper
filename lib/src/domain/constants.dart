@@ -4,4 +4,5 @@ class Constants {
   static const APP_LABEL = 'LiveStream Helper';
   static const DEBUG = true;
   static const XTREME_DEBUG = true;
+  static const int MAX_PRODUCTS_PER_PAGE = 9;
 }

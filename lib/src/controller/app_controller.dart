@@ -31,9 +31,7 @@ class AppController {
           result.files.first.path!,
         );
         runtimeMemory?.addClientOrderList(clientOrderList);
-        FeedbackService.showSuccessMessage(
-          "Planilha processada. Resultado encontra-se no arquivo em: ...",
-        );
+        FeedbackService.showSuccessMessage("Planilha processada com sucesso.");
       } catch (err, stk) {
         FeedbackService.showErrMessage(
           "Algo deu errado no processamento dessa planlha\n mais infos (tira um print e envia p dev se persistir):\n ${err.toString()}\n${stk.toString()}",
@@ -72,7 +70,7 @@ class AppController {
               //collect labels
             } else {
               // if in client instagram @ colunm range
-              if (colIndex >= 2) {
+              if (colIndex >= 3) {
                 // if cell is empty
                 if (cellValue == '') {
                   if (Constants.XTREME_DEBUG) {
@@ -87,17 +85,26 @@ class AppController {
                 List<Data?> rowCursor = table.rows[rowIndex];
                 var codVal = rowCursor[0]?.value;
                 var dscVal = rowCursor[1]?.value;
+                var priceVal = rowCursor[2]?.value;
                 var sizeVal = table.rows[0][colIndex]?.value;
 
                 // treats empty cod/dsc values
                 if (codVal == null) {
                   codVal = treatCodDscOffSet(table.rows, rowIndex, 0);
                   dscVal = treatCodDscOffSet(table.rows, rowIndex, 1);
+                  priceVal = treatCodDscOffSet<double>(table.rows, rowIndex, 2);
                 }
 
+                // transforms collected data to runtime data type
                 int cod = codVal is int ? codVal : -1;
+                if (codVal is SharedString) {
+                  cod = int.tryParse(codVal.toString()) ?? cod;
+                }
+                // int cod = codVal is int ? codVal : -1;
+
                 String prodDsc =
                     dscVal is SharedString ? dscVal.toString() : '-';
+                double price = priceVal is double ? priceVal : -1.0;
                 String prodSize =
                     sizeVal is SharedString ? sizeVal.toString() : '-';
 
@@ -108,11 +115,11 @@ class AppController {
                           clientOrder.client == cellValue,
                     )
                     .products
-                    .add(Product(cod, dscVal.toString(), prodSize));
+                    .add(Product(cod, dscVal.toString(), prodSize, price));
 
                 if (Constants.DEBUG) {
                   log(
-                    'cod: ${cod}\ndsc: ${prodDsc}\nsize: ${prodSize}',
+                    'cod: ${cod}\ndsc: ${prodDsc}\nsize: ${prodSize}\n price: ${price}',
                     name:
                         'app_controller.processXlxs.adding_product_to_client: $cellValue',
                   );
@@ -126,7 +133,7 @@ class AppController {
     return clientOrderList;
   }
 
-  dynamic treatCodDscOffSet(var excelCursor, int rI, int cI) {
+  dynamic treatCodDscOffSet<T>(var excelCursor, int rI, int cI) {
     int limit = 10;
     var rowIndexOffSet = rI;
     while (limit >= 0 && rowIndexOffSet >= 0) {
@@ -134,14 +141,28 @@ class AppController {
       if (cellVal != null) {
         if (cellVal is SharedString) {
           if (cellVal.toString().isNotEmpty && cellVal.toString() != '') {
+            // logging
+            if (Constants.XTREME_DEBUG) {
+              log('string val: $cellVal', name: 'crawler found value');
+            }
             return cellVal;
           }
         }
         if (cellVal is int) {
+          if (Constants.XTREME_DEBUG) {
+            log('int val: $cellVal', name: 'crawler found value');
+          }
+          return cellVal;
+        }
+
+        if (cellVal is double) {
+          if (Constants.XTREME_DEBUG) {
+            log('double val: $cellVal', name: 'crawler found value');
+          }
           return cellVal;
         }
       }
-
+      // craw back
       rowIndexOffSet--;
       limit--;
     }
@@ -170,9 +191,10 @@ class AppController {
               //collect labels
             } else {
               // if in client instagram @ colunm range
-              if (colIndex >= 2) {
+              if (colIndex >= 3) {
                 // collect client @
                 if (!clients.contains(cellValue)) {
+                  /// TODO: exclude X + ""(empty space) from crawling search
                   clients.add(cellValue);
                   if (Constants.XTREME_DEBUG) {
                     log(
@@ -202,12 +224,15 @@ class ClientOrder {
   String client;
   List<Product> products;
   ClientOrder(this.client, this.products);
+
+  double orderTotal() => products.fold(0.0, (i, a) => i + a.price);
 }
 
 class Product {
   int cod;
   String dsc;
   String prodSize;
+  double price;
 
-  Product(this.cod, this.dsc, this.prodSize);
+  Product(this.cod, this.dsc, this.prodSize, this.price);
 }
