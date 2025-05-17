@@ -13,9 +13,10 @@ import 'package:req_livestream_helper/src/view/theme.dart';
 class ClientsOrderDialog extends StatelessWidget {
   List<ClientOrder> clientsOrder;
   ClientsOrderDialog({super.key, required this.clientsOrder});
-
   @override
   Widget build(BuildContext context) {
+    double h = MediaQuery.of(context).size.height;
+
     return Padding(
       padding: EdgeInsets.all(40),
       child: ComingUpAnimation(
@@ -37,45 +38,114 @@ class ClientsOrderDialog extends StatelessWidget {
                 borderColor: AppTheme.primaryBorderColor,
                 padding: 10,
                 child: BaseScrollViewList(
-                  cardWidget:
-                      ({item}) => RoundedBorderWrap.base(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(item.client),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.3,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  BaseText(item.products.length.toString()),
-                                  SizedBox(width: 20),
-                                  BaseText(
-                                    NumberFormat.currency(
-                                      locale: 'pt_BR',
-                                      symbol: 'R\$',
-                                    ).format(
-                                      DataHelper.getProductsTotalPerClient(
-                                        item.products,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                  cardWidget: ({item}) => ClientOrderCard(cOrder: item),
                   data:
                       clientsOrder.where((cO) => cO.client.isNotEmpty).toList(),
-                  height: MediaQuery.of(context).size.height * 0.4,
+                  height: h >= 700 ? h * 0.51 : h * 0.21,
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class ClientOrderCard extends StatefulWidget {
+  final ClientOrder cOrder;
+  const ClientOrderCard({super.key, required this.cOrder});
+
+  @override
+  State<ClientOrderCard> createState() => _ClientOrderCardState();
+}
+
+class _ClientOrderCardState extends State<ClientOrderCard> {
+  bool show = false;
+  @override
+  Widget build(BuildContext context) {
+    return RoundedBorderWrap.base(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  print('print');
+                  setState(() {
+                    show = !show;
+                  });
+                },
+                child: RoundedBorderWrap.base(
+                  child: Icon(
+                    show ? Icons.expand_less : Icons.expand_more,
+                    color: Colors.deepPurple,
+                  ),
+                ),
+              ),
+              Text(widget.cOrder.client),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.3,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    BaseText(widget.cOrder.products.length.toString()),
+                    SizedBox(width: 20),
+                    BaseText(
+                      NumberFormat.currency(
+                        locale: 'pt_BR',
+                        symbol: 'R\$',
+                      ).format(
+                        DataHelper.getProductsTotalPerClient(
+                          widget.cOrder.products,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (show)
+            RoundedBorderWrap.base(
+              child: BaseScrollViewList(
+                height: MediaQuery.of(context).size.height * 0.15,
+                data: widget.cOrder.products,
+                cardWidget: ({item}) => ProductCard(item),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class ProductCard extends StatelessWidget {
+  Product product;
+  ProductCard(this.product, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return RoundedBorderWrap.base(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          BaseText('#${product.cod} - ${product.dsc}'),
+          Row(
+            children: [
+              BaseText(product.prodSize),
+              SizedBox(width: 10),
+              BaseText(
+                NumberFormat.currency(
+                  locale: 'pt_BR',
+                  symbol: 'R\$',
+                ).format(product.price),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
