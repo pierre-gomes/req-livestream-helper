@@ -43,7 +43,28 @@ class ClientsOrderDialog extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(item.client),
-                            BaseText(item.products.length.toString()),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  BaseText(item.products.length.toString()),
+                                  SizedBox(width: 20),
+                                  BaseText(
+                                    NumberFormat.currency(
+                                      locale: 'pt_BR',
+                                      symbol: 'R\$',
+                                    ).format(
+                                      DataHelper.getProductsTotalPerClient(
+                                        item.products,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -124,7 +145,7 @@ class SingleClientsOrderInfo extends StatelessWidget {
     return RoundedBorderWrap.base(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [Text(label), Text(value)],
+        children: [Text(label), BaseText(value)],
       ),
     );
   }

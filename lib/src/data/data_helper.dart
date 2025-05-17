@@ -19,4 +19,8 @@ class DataHelper {
       (t, clientOrder) => t + clientOrder.products.length,
     );
   }
+
+  static double getProductsTotalPerClient(List<Product> products) {
+    return products.fold(0.0, (t, p) => t + p.price);
+  }
 }
