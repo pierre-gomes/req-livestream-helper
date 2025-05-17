@@ -106,7 +106,7 @@ class AppController {
 
                 String prodDsc =
                     dscVal is SharedString ? dscVal.toString() : '-';
-                // double price = priceVal is/
+                double price = priceVal is double ? priceVal : -1.0;
                 String prodSize =
                     sizeVal is SharedString ? sizeVal.toString() : '-';
 
@@ -117,11 +117,11 @@ class AppController {
                           clientOrder.client == cellValue,
                     )
                     .products
-                    .add(Product(cod, dscVal.toString(), prodSize));
+                    .add(Product(cod, dscVal.toString(), prodSize, price));
 
                 if (Constants.DEBUG) {
                   log(
-                    'cod: ${cod}\ndsc: ${prodDsc}\nsize: ${prodSize}\n price: ${priceVal}',
+                    'cod: ${cod}\ndsc: ${prodDsc}\nsize: ${prodSize}\n price: ${price}',
                     name:
                         'app_controller.processXlxs.adding_product_to_client: $cellValue',
                   );
@@ -226,13 +226,15 @@ class ClientOrder {
   String client;
   List<Product> products;
   ClientOrder(this.client, this.products);
+
+  double orderTotal() => products.fold(0.0, (i, a) => i + a.price);
 }
 
 class Product {
   int cod;
   String dsc;
   String prodSize;
-  // Double price;
+  double price;
 
-  Product(this.cod, this.dsc, this.prodSize);
+  Product(this.cod, this.dsc, this.prodSize, this.price);
 }

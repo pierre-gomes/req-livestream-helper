@@ -37,6 +37,7 @@ class PrintViewer extends StatelessWidget {
   pw.Page CustomPdfPage(
     PdfPageFormat format,
     ClientOrder clientOrder,
+    double orderTotal,
     int index, {
     String? orderPart,
   }) {
@@ -93,6 +94,28 @@ class PrintViewer extends StatelessWidget {
                     pw.Text(clientOrder.products.length.toString()),
                   ],
                 ),
+                pw.SizedBox(height: 10),
+                pw.Row(
+                  // mainAxisAlignment: f.MainAxisAlignment.center,
+                  children: [
+                    pw.Text("Total do pedido"),
+                    pw.SizedBox(width: 270),
+                    pw.Text('R\$${orderTotal.toStringAsFixed(2)}'),
+                  ],
+                ),
+                if (orderPart != null) pw.SizedBox(height: 10),
+                if (orderPart != null)
+                  pw.Row(
+                    // mainAxisAlignment: f.MainAxisAlignment.center,
+                    children: [
+                      pw.Text("Total dos produtos na pagina"),
+                      pw.SizedBox(width: 200),
+                      pw.Text(
+                        'R\$${clientOrder.orderTotal().toStringAsFixed(2)}',
+                      ),
+                    ],
+                  ),
+
                 pw.SizedBox(height: 30),
 
                 /// product listing
@@ -100,7 +123,9 @@ class PrintViewer extends StatelessWidget {
                   children: [
                     pw.SizedBox(width: 15),
                     pw.Text("#Cod    Descricao"),
-                    pw.SizedBox(width: 210),
+                    pw.SizedBox(width: 160),
+                    pw.Text("Preço"),
+                    pw.SizedBox(width: 10),
                     pw.Text("Tamanho"),
                     pw.SizedBox(width: 10),
                     pw.Text("Check"),
@@ -136,9 +161,12 @@ class PrintViewer extends StatelessWidget {
                                     ),
                                     pw.Row(
                                       children: [
+                                        pw.Text(
+                                          'R\$ ${p.price.toStringAsFixed(2)}',
+                                        ),
+                                        pw.SizedBox(width: 10),
                                         pw.Text('${p.prodSize}'),
                                         pw.SizedBox(width: 20),
-
                                         pw.Text('[  ]'),
                                       ],
                                     ),
@@ -185,6 +213,7 @@ class PrintViewer extends StatelessWidget {
             CustomPdfPage(
               format,
               _cO,
+              clientOrder.orderTotal(),
               spIndex,
               orderPart: " (${i + 1}/${chuncks.length})",
             ),
@@ -193,7 +222,9 @@ class PrintViewer extends StatelessWidget {
       }
       /// otherwise adds intire order in the page
       else {
-        pdf.addPage(CustomPdfPage(format, clientOrder, spIndex));
+        pdf.addPage(
+          CustomPdfPage(format, clientOrder, clientOrder.orderTotal(), spIndex),
+        );
       }
     });
     return pdf.save();
